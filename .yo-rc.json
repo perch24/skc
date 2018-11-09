@@ -1,0 +1,37 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "golf.skc",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "5.6.1",
+    "applicationType": "monolith",
+    "baseName": "skc",
+    "packageName": "golf.skc",
+    "packageFolder": "golf/skc",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "postgresql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YjFiNmM1N2U4NTk5MzhmMjg3Zjc4MDQ2NmY2NjMyOWQzZWIxNzMwOWQ5YThhMTQ4NGQyMzU3N2E4N2NmNDhlYTY2M2I1NzUyNTIxN2MxMDQzYjdjMzZiOGYxN2VjNmYzNDdjOWVkZGIwZmE5MjhjNzQ1M2E5MjAwZDM0Y2M0OTg=",
+    "clientFramework": "react",
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": [
+      "en"
+    ]
+  }
+}
