@@ -53,8 +53,8 @@ public class LogsResourceIntTest {
         logger.setName("ROOT");
 
         restLogsMockMvc.perform(put("/management/logs")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(logger)))
+            .contentType(TestUtil.INSTANCE.getAPPLICATION_JSON_UTF8())
+            .content(TestUtil.INSTANCE.convertObjectToJsonBytes(logger)))
             .andExpect(status().isNoContent());
     }
 
