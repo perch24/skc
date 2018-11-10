@@ -23,6 +23,7 @@ plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
     id "com.moowork.node" version "1.2.0"
     id 'org.liquibase.gradle' version '2.0.1'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
     //jhipster-needle-gradle-plugins - JHipster will add additional gradle plugins here
 }
 
@@ -245,6 +246,9 @@ dependencies {
     testCompile "org.hamcrest:hamcrest-library"
     testCompile "com.h2database:h2"
     liquibaseRuntime "com.h2database:h2"
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    compile("org.jetbrains.kotlin:kotlin-reflect")
+    compile('com.fasterxml.jackson.module:jackson-module-kotlin')
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 
@@ -271,3 +275,13 @@ if (project.hasProperty('nodeInstall')) {
 compileJava.dependsOn processResources
 processResources.dependsOn cleanResources,bootBuildInfo
 bootBuildInfo.mustRunAfter cleanResources
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
