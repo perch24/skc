@@ -21,5 +21,5 @@ data class Authority(
     @Size(max = 50)
     @Id
     @Column(length = 50)
-    var name: String? = null
+    var name: String
 )

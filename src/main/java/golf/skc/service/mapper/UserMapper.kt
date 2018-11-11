@@ -50,8 +50,8 @@ open class UserMapper {
         return User(id=id)
     }
 
-    fun authoritiesFromStrings(strings: Set<String>): Set<Authority> {
-        return strings.map { Authority(name = it) }.toSet()
+    fun authoritiesFromStrings(strings: Set<String>): MutableSet<Authority> {
+        return HashSet(strings.map { Authority(name = it) })
     }
 }
 

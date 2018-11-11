@@ -114,7 +114,7 @@ open class CustomAuditEventRepositoryIntTest {
     fun testAddEventWithWebAuthenticationDetails() {
         val session = MockHttpSession(null, "test-session-id")
         val request = MockHttpServletRequest()
-        request.session = session
+        request.setSession(session)
         request.remoteAddr = "1.2.3.4"
         val details = WebAuthenticationDetails(request)
         val data = HashMap<String, Any>()

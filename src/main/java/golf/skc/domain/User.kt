@@ -85,7 +85,7 @@ data class User(
         inverseJoinColumns = [JoinColumn(name = "authority_name", referencedColumnName = "name")])
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
-    var authorities: Set<Authority> = HashSet()
+    var authorities: MutableSet<Authority> = HashSet()
 ) : AbstractAuditingEntity() {
     @PrePersist
     @PreUpdate

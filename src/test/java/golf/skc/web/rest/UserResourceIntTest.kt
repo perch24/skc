@@ -42,35 +42,35 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
  * @see UserResource
  */
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(SkcApp::class))
+@SpringBootTest(classes = [SkcApp::class])
 class UserResourceIntTest {
 
     @Autowired
-    private val userRepository: UserRepository? = null
+    lateinit var userRepository: UserRepository
 
     @Autowired
-    private val mailService: MailService? = null
+    lateinit var mailService: MailService
 
     @Autowired
-    private val userService: UserService? = null
+    lateinit var userService: UserService
 
     @Autowired
-    private val userMapper: UserMapper? = null
+    lateinit var userMapper: UserMapper
 
     @Autowired
-    private val jacksonMessageConverter: MappingJackson2HttpMessageConverter? = null
+    lateinit var jacksonMessageConverter: MappingJackson2HttpMessageConverter
 
     @Autowired
-    private val pageableArgumentResolver: PageableHandlerMethodArgumentResolver? = null
+    lateinit var pageableArgumentResolver: PageableHandlerMethodArgumentResolver
 
     @Autowired
-    private val exceptionTranslator: ExceptionTranslator? = null
+    lateinit var exceptionTranslator: ExceptionTranslator
 
     @Autowired
-    private val em: EntityManager? = null
+    lateinit var em: EntityManager
 
     @Autowired
-    private val cacheManager: CacheManager? = null
+    lateinit var cacheManager: CacheManager
 
     private var restUserMockMvc: MockMvc? = null
 
@@ -78,29 +78,29 @@ class UserResourceIntTest {
 
     @Before
     fun setup() {
-        cacheManager!!.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.clear()
-        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)!!.clear()
+        cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.clear()
+        cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)?.clear()
         val userResource = UserResource(userService, userRepository, mailService)
 
         this.restUserMockMvc = MockMvcBuilders.standaloneSetup(userResource)
-                .setCustomArgumentResolvers(pageableArgumentResolver!!)
-                .setControllerAdvice(exceptionTranslator!!)
-                .setMessageConverters(jacksonMessageConverter!!)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setMessageConverters(jacksonMessageConverter)
                 .build()
     }
 
     @Before
     fun initTest() {
-        user = createEntity(em)
-        user!!.login = DEFAULT_LOGIN
-        user!!.email = DEFAULT_EMAIL
+        user = createEntity()
+        user?.login = DEFAULT_LOGIN
+        user?.email = DEFAULT_EMAIL
     }
 
     @Test
     @Transactional
     @Throws(Exception::class)
     fun createUser() {
-        val databaseSizeBeforeCreate = userRepository!!.findAll().size
+        val databaseSizeBeforeCreate = userRepository.findAll().size
 
         // Create the User
         val managedUserVM = ManagedUserVM()
@@ -135,7 +135,7 @@ class UserResourceIntTest {
     @Transactional
     @Throws(Exception::class)
     fun createUserWithExistingId() {
-        val databaseSizeBeforeCreate = userRepository!!.findAll().size
+        val databaseSizeBeforeCreate = userRepository.findAll().size
 
         val managedUserVM = ManagedUserVM()
         managedUserVM.id = 1L
@@ -165,7 +165,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun createUserWithExistingLogin() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
         val databaseSizeBeforeCreate = userRepository.findAll().size
 
         val managedUserVM = ManagedUserVM()
@@ -195,7 +195,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun createUserWithExistingEmail() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
         val databaseSizeBeforeCreate = userRepository.findAll().size
 
         val managedUserVM = ManagedUserVM()
@@ -225,7 +225,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun getAllUsers() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
 
         // Get all the users
         restUserMockMvc!!.perform(get("/api/users?sort=id,desc")
@@ -245,9 +245,9 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun getUser() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
 
-        assertThat(cacheManager!!.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user!!.login!!)).isNull()
+        assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user!!.login!!)).isNull()
 
         // Get the user
         restUserMockMvc!!.perform(get("/api/users/{login}", user!!.login!!))
@@ -260,7 +260,7 @@ class UserResourceIntTest {
                 .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGEURL))
                 .andExpect(jsonPath("$.langKey").value(DEFAULT_LANGKEY))
 
-        assertThat(cacheManager!!.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user!!.login!!)).isNotNull()
+        assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user!!.login!!)).isNotNull
     }
 
     @Test
@@ -276,7 +276,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun updateUser() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
         val databaseSizeBeforeUpdate = userRepository.findAll().size
 
         // Update the user
@@ -319,7 +319,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun updateUserLogin() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
         val databaseSizeBeforeUpdate = userRepository.findAll().size
 
         // Update the user
@@ -363,7 +363,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun updateUserExistingEmail() {
         // Initialize the database with 2 users
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
 
         val anotherUser = User()
         anotherUser.login = "jhipster"
@@ -406,7 +406,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun updateUserExistingLogin() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
 
         val anotherUser = User()
         anotherUser.login = "jhipster"
@@ -449,7 +449,7 @@ class UserResourceIntTest {
     @Throws(Exception::class)
     fun deleteUser() {
         // Initialize the database
-        userRepository!!.saveAndFlush(user!!)
+        userRepository.saveAndFlush(user!!)
         val databaseSizeBeforeDelete = userRepository.findAll().size
 
         // Delete the user
@@ -457,7 +457,7 @@ class UserResourceIntTest {
                 .accept(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk)
 
-        assertThat(cacheManager!!.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user!!.login!!)).isNull()
+        assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user!!.login!!)).isNull()
 
         // Validate the database is empty
         val userList = userRepository.findAll()
@@ -495,7 +495,7 @@ class UserResourceIntTest {
 
     @Test
     fun testUserFromId() {
-        assertThat(userMapper!!.userFromId(DEFAULT_ID)!!.id).isEqualTo(DEFAULT_ID)
+        assertThat(userMapper.userFromId(DEFAULT_ID)!!.id).isEqualTo(DEFAULT_ID)
         assertThat(userMapper.userFromId(null)).isNull()
     }
 
@@ -514,7 +514,7 @@ class UserResourceIntTest {
         userDTO.lastModifiedBy = DEFAULT_LOGIN
         userDTO.authorities = setOf(AuthoritiesConstants.USER)
 
-        val user = userMapper!!.userDTOToUser(userDTO)
+        val user = userMapper.userDTOToUser(userDTO)
         assertThat(user.id).isEqualTo(DEFAULT_ID)
         assertThat(user.login).isEqualTo(DEFAULT_LOGIN)
         assertThat(user.firstName).isEqualTo(DEFAULT_FIRSTNAME)
@@ -542,7 +542,7 @@ class UserResourceIntTest {
         authorities.add(authority)
         user!!.authorities = authorities
 
-        val userDTO = userMapper!!.userToUserDTO(user!!)
+        val userDTO = userMapper.userToUserDTO(user!!)
 
         assertThat(userDTO.id).isEqualTo(DEFAULT_ID)
         assertThat(userDTO.login).isEqualTo(DEFAULT_LOGIN)
@@ -562,14 +562,13 @@ class UserResourceIntTest {
 
     @Test
     fun testAuthorityEquals() {
-        val authorityA = Authority()
+        val authorityA = Authority("test")
         assertThat(authorityA).isEqualTo(authorityA)
         assertThat(authorityA).isNotEqualTo(null)
         assertThat(authorityA).isNotEqualTo(Any())
-        assertThat(authorityA.hashCode()).isEqualTo(0)
         assertThat(authorityA.toString()).isNotNull()
 
-        val authorityB = Authority()
+        val authorityB = Authority("test")
         assertThat(authorityA).isEqualTo(authorityB)
 
         authorityB.name = AuthoritiesConstants.ADMIN
@@ -585,28 +584,28 @@ class UserResourceIntTest {
 
     companion object {
 
-        private val DEFAULT_LOGIN = "johndoe"
-        private val UPDATED_LOGIN = "jhipster"
+        private const val DEFAULT_LOGIN = "johndoe"
+        private const val UPDATED_LOGIN = "jhipster"
 
-        private val DEFAULT_ID = 1L
+        private const val DEFAULT_ID = 1L
 
-        private val DEFAULT_PASSWORD = "passjohndoe"
-        private val UPDATED_PASSWORD = "passjhipster"
+        private const val DEFAULT_PASSWORD = "passjohndoe"
+        private const val UPDATED_PASSWORD = "passjhipster"
 
-        private val DEFAULT_EMAIL = "johndoe@localhost"
-        private val UPDATED_EMAIL = "jhipster@localhost"
+        private const val DEFAULT_EMAIL = "johndoe@localhost"
+        private const val UPDATED_EMAIL = "jhipster@localhost"
 
-        private val DEFAULT_FIRSTNAME = "john"
-        private val UPDATED_FIRSTNAME = "jhipsterFirstName"
+        private const val DEFAULT_FIRSTNAME = "john"
+        private const val UPDATED_FIRSTNAME = "jhipsterFirstName"
 
-        private val DEFAULT_LASTNAME = "doe"
-        private val UPDATED_LASTNAME = "jhipsterLastName"
+        private const val DEFAULT_LASTNAME = "doe"
+        private const val UPDATED_LASTNAME = "jhipsterLastName"
 
-        private val DEFAULT_IMAGEURL = "http://placehold.it/50x50"
-        private val UPDATED_IMAGEURL = "http://placehold.it/40x40"
+        private const val DEFAULT_IMAGEURL = "http://placehold.it/50x50"
+        private const val UPDATED_IMAGEURL = "http://placehold.it/40x40"
 
-        private val DEFAULT_LANGKEY = "en"
-        private val UPDATED_LANGKEY = "fr"
+        private const val DEFAULT_LANGKEY = "en"
+        private const val UPDATED_LANGKEY = "fr"
 
         /**
          * Create a User.
@@ -614,7 +613,7 @@ class UserResourceIntTest {
          * This is a static method, as tests for other entities might also need it,
          * if they test an entity which has a required relationship to the User entity.
          */
-        fun createEntity(em: EntityManager?): User {
+        fun createEntity(): User {
             val user = User()
             user.login = DEFAULT_LOGIN + RandomStringUtils.randomAlphabetic(5)
             user.password = RandomStringUtils.random(60)

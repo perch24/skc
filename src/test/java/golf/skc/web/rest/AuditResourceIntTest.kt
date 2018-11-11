@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [SkcApp::class])
 @Transactional
-open class AuditResourceIntTest {
+class AuditResourceIntTest {
 
     @Autowired
     lateinit var auditEventRepository: PersistenceAuditEventRepository

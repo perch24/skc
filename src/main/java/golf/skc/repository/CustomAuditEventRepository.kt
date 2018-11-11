@@ -19,7 +19,7 @@ import java.util.*
  * An implementation of Spring Boot's AuditEventRepository.
  */
 @Repository
-open class CustomAuditEventRepository(private val persistenceAuditEventRepository: PersistenceAuditEventRepository,
+class CustomAuditEventRepository(private val persistenceAuditEventRepository: PersistenceAuditEventRepository,
                                  private val auditEventConverter: AuditEventConverter) : AuditEventRepository {
 
     private val log = LoggerFactory.getLogger(javaClass)
