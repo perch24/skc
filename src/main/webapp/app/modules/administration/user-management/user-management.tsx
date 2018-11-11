@@ -69,7 +69,7 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
             <FontAwesomeIcon icon="plus" /> <Translate contentKey="userManagement.home.createLabel">Create a new user</Translate>
           </Link>
         </h2>
-        <Table responsive striped>
+        <Table responsive striped size="sm">
           <thead>
             <tr>
               <th className="hand" onClick={this.sort('id')}>
@@ -119,11 +119,11 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
                 <td>{user.email}</td>
                 <td>
                   {user.activated ? (
-                    <Button color="success" onClick={this.toggleActive(user)}>
+                    <Button color="success" size="sm" onClick={this.toggleActive(user)}>
                       Activated
                     </Button>
                   ) : (
-                    <Button color="danger" onClick={this.toggleActive(user)}>
+                    <Button color="danger" size="sm" onClick={this.toggleActive(user)}>
                       Deactivated
                     </Button>
                   )}
@@ -149,15 +149,9 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
                   <div className="btn-group flex-btn-group-container">
                     <Button tag={Link} to={`${match.url}/${user.login}`} color="info" size="sm">
                       <FontAwesomeIcon icon="eye" />{' '}
-                      <span className="d-none d-md-inline">
-                        <Translate contentKey="entity.action.view">View</Translate>
-                      </span>
                     </Button>
                     <Button tag={Link} to={`${match.url}/${user.login}/edit`} color="primary" size="sm">
                       <FontAwesomeIcon icon="pencil-alt" />{' '}
-                      <span className="d-none d-md-inline">
-                        <Translate contentKey="entity.action.edit">Edit</Translate>
-                      </span>
                     </Button>
                     <Button
                       tag={Link}
@@ -167,9 +161,6 @@ export class UserManagement extends React.Component<IUserManagementProps, IPagin
                       disabled={account.login === user.login}
                     >
                       <FontAwesomeIcon icon="trash" />{' '}
-                      <span className="d-none d-md-inline">
-                        <Translate contentKey="entity.action.delete">Delete</Translate>
-                      </span>
                     </Button>
                   </div>
                 </td>

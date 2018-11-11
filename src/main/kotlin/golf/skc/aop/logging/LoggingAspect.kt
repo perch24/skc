@@ -68,7 +68,7 @@ class LoggingAspect(private val env: Environment) {
    */
   @Around("applicationPackagePointcut() && springBeanPointcut()")
   @Throws(Throwable::class)
-  fun logAround(joinPoint: ProceedingJoinPoint): Any {
+  fun logAround(joinPoint: ProceedingJoinPoint): Any? {
     if (log.isDebugEnabled) {
       log.debug("Enter: {}.{}() with argument[s] = {}", joinPoint.signature.declaringTypeName,
         joinPoint.signature.name, Arrays.toString(joinPoint.args))
