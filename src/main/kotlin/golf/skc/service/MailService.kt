@@ -20,8 +20,10 @@ import java.util.*
  * We use the @Async annotation to send emails asynchronously.
  */
 @Service
-class MailService(private val jHipsterProperties: JHipsterProperties, private val javaMailSender: JavaMailSender,
-                  private val messageSource: MessageSource, private val templateEngine: SpringTemplateEngine) {
+class MailService(private val jHipsterProperties: JHipsterProperties,
+                  @Suppress("SpringJavaInjectionPointsAutowiringInspection") private val javaMailSender: JavaMailSender,
+                  private val messageSource: MessageSource,
+                  private val templateEngine: SpringTemplateEngine) {
 
   private val log = LoggerFactory.getLogger(MailService::class.java)
 
@@ -81,9 +83,7 @@ class MailService(private val jHipsterProperties: JHipsterProperties, private va
   }
 
   companion object {
-
-    private val USER = "user"
-
-    private val BASE_URL = "baseUrl"
+    private const val USER = "user"
+    private const val BASE_URL = "baseUrl"
   }
 }

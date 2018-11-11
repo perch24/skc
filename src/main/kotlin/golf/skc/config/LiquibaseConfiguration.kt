@@ -18,6 +18,7 @@ class LiquibaseConfiguration(private val env: Environment, private val cacheMana
   private val log = LoggerFactory.getLogger(LiquibaseConfiguration::class.java)
 
   @Bean
+  @Suppress("SpringJavaInjectionPointsAutowiringInspection")
   fun liquibase(@Qualifier("taskExecutor") taskExecutor: TaskExecutor,
                 dataSource: DataSource, liquibaseProperties: LiquibaseProperties): SpringLiquibase {
 

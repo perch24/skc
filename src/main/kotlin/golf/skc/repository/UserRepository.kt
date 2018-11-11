@@ -13,6 +13,7 @@ import java.util.*
 /**
  * Spring Data JPA repository for the User entity.
  */
+@Suppress("SpringCacheAnnotationsOnInterfaceInspection")
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
 

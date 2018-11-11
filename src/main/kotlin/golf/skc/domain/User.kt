@@ -89,5 +89,6 @@ data class User(
   @PreUpdate
   fun beforePersist() {
     this.login = this.login?.toLowerCase()
+    this.email = this.email?.toLowerCase()
   }
 }

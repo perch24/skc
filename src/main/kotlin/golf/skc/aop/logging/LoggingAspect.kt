@@ -27,6 +27,7 @@ class LoggingAspect(private val env: Environment) {
   @Pointcut("within(@org.springframework.stereotype.Repository *)" +
     " || within(@org.springframework.stereotype.Service *)" +
     " || within(@org.springframework.web.bind.annotation.RestController *)")
+  @Suppress("UNUSED")
   fun springBeanPointcut() {
     // Method is empty as this is just a Pointcut, the implementations are in the advices.
   }
@@ -37,6 +38,7 @@ class LoggingAspect(private val env: Environment) {
   @Pointcut("within(golf.skc.repository..*)" +
     " || within(golf.skc.service..*)" +
     " || within(golf.skc.web.rest..*)")
+  @Suppress("UNUSED")
   fun applicationPackagePointcut() {
     // Method is empty as this is just a Pointcut, the implementations are in the advices.
   }

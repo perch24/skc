@@ -28,7 +28,13 @@ import javax.annotation.PostConstruct
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Import(SecurityProblemSupport::class)
-class SecurityConfiguration(private val authenticationManagerBuilder: AuthenticationManagerBuilder, private val userDetailsService: UserDetailsService, private val tokenProvider: TokenProvider, private val corsFilter: CorsFilter, private val problemSupport: SecurityProblemSupport) : WebSecurityConfigurerAdapter() {
+class SecurityConfiguration(
+  private val authenticationManagerBuilder: AuthenticationManagerBuilder,
+  private val userDetailsService: UserDetailsService,
+  private val tokenProvider: TokenProvider,
+  private val corsFilter: CorsFilter,
+  private val problemSupport: SecurityProblemSupport) : WebSecurityConfigurerAdapter() {
+
   @PostConstruct
   fun init() {
     try {

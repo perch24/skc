@@ -49,7 +49,7 @@ class AccountResource(private val userRepository: UserRepository, private val us
    * @param managedUserVM the managed user View Model
    * @throws InvalidPasswordException 400 (Bad Request) if the password is incorrect
    * @throws EmailAlreadyUsedException 400 (Bad Request) if the email is already used
-   * @throws BadRequestExceptions 400 (Bad Request) if the login is already used
+   * @throws LoginAlreadyUsedException 400 (Bad Request) if the login is already used
    */
   @PostMapping("/register")
   @Timed
@@ -119,7 +119,7 @@ class AccountResource(private val userRepository: UserRepository, private val us
    * @param passwordChangeDto current and new password
    * @throws InvalidPasswordException 400 (Bad Request) if the new password is incorrect
    */
-  @PostMapping(path = arrayOf("/account/change-password"))
+  @PostMapping(path = ["/account/change-password"])
   @Timed
   fun changePassword(@RequestBody passwordChangeDto: PasswordChangeDTO) {
     if (!checkPasswordLength(passwordChangeDto.newPassword)) {
@@ -134,7 +134,7 @@ class AccountResource(private val userRepository: UserRepository, private val us
    * @param mail the mail of the user
    * @throws EmailNotFoundException 400 (Bad Request) if the email address is not registered
    */
-  @PostMapping(path = arrayOf("/account/reset-password/init"))
+  @PostMapping(path = ["/account/reset-password/init"])
   @Timed
   fun requestPasswordReset(@RequestBody mail: String) {
     mailService.sendPasswordResetMail(

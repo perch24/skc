@@ -87,19 +87,17 @@ class UserResource(private val userService: UserService, private val userReposit
   fun createUser(@Valid @RequestBody userDTO: UserDTO): ResponseEntity<User> {
     log.debug("REST request to save User : {}", userDTO)
 
-    if (userDTO.id != null) {
-      throw BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists")
-      // Lowercase the user login before comparing with database
-    } else if (userRepository.findOneByLogin(userDTO.login!!.toLowerCase()).isPresent) {
-      throw LoginAlreadyUsedException()
-    } else if (userRepository.findOneByEmailIgnoreCase(userDTO.email!!).isPresent) {
-      throw EmailAlreadyUsedException()
-    } else {
-      val newUser = userService.createUser(userDTO)
-      mailService.sendCreationEmail(newUser)
-      return ResponseEntity.created(URI("/api/users/" + newUser.login!!))
-        .headers(HeaderUtil.createAlert("userManagement.created", newUser.login!!))
-        .body(newUser)
+    when {
+      userDTO.id != null -> throw BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists")
+      userRepository.findOneByLogin(userDTO.login!!.toLowerCase()).isPresent -> throw LoginAlreadyUsedException()
+      userRepository.findOneByEmailIgnoreCase(userDTO.email!!).isPresent -> throw EmailAlreadyUsedException()
+      else -> {
+        val newUser = userService.createUser(userDTO)
+        mailService.sendCreationEmail(newUser)
+        return ResponseEntity.created(URI("/api/users/" + newUser.login!!))
+          .headers(HeaderUtil.createAlert("userManagement.created", newUser.login!!))
+          .body(newUser)
+      }
     }
   }
 

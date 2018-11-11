@@ -21,7 +21,7 @@ import java.util.*
  */
 class CustomParameterizedException(message: String, paramMap: Map<String, Any>) : AbstractThrowableProblem(ErrorConstants.PARAMETERIZED_TYPE, "Parameterized Exception", BAD_REQUEST, null, null, null, toProblemParameters(message, paramMap)) {
 
-  constructor(message: String, vararg params: String) : this(message, toParamMap(*params)) {}
+  constructor(message: String, vararg params: String) : this(message, toParamMap(*params))
 
   override fun getCause(): Exceptional? {
     return super.cause

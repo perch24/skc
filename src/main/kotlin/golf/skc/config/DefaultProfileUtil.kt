@@ -37,9 +37,10 @@ object DefaultProfileUtil {
    * @param env spring environment
    * @return profiles
    */
+  @Suppress("UNUSED")
   fun getActiveProfiles(env: Environment): Array<String> {
     val profiles = env.activeProfiles
-    return if (profiles.size == 0) {
+    return if (profiles.isEmpty()) {
       env.defaultProfiles
     } else profiles
   }

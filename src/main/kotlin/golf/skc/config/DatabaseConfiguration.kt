@@ -23,13 +23,13 @@ class DatabaseConfiguration(private val env: Environment) {
     @Throws(NumberFormatException::class)
     get() {
       var port = Integer.parseInt(env.getProperty("server.port")!!)
-      if (port < 10000) {
-        port = 10000 + port
+      port = if (port < 10000) {
+        10000 + port
       } else {
         if (port < 63536) {
-          port = port + 2000
+          port + 2000
         } else {
-          port = port - 2000
+          port - 2000
         }
       }
       return port.toString()
@@ -41,6 +41,7 @@ class DatabaseConfiguration(private val env: Environment) {
    * @return the H2 database TCP server
    * @throws SQLException if the server failed to start
    */
+  @Suppress("ContextJavaBeanUnresolvedMethodsInspection")
   @Bean(initMethod = "start", destroyMethod = "stop")
   @Profile(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
   @Throws(SQLException::class)

@@ -31,7 +31,8 @@ import javax.servlet.ServletContext
 class MetricsConfiguration(
   // The cacheManager is injected here to force its initialization, so the JCacheGaugeSet
   // will be correctly created below.
-  private val jHipsterProperties: JHipsterProperties, @Suppress("UNUSED_PARAMETER") cacheManager: CacheManager) : MetricsConfigurerAdapter(), ServletContextInitializer {
+  private val jHipsterProperties: JHipsterProperties,
+  @Suppress("UNUSED_PARAMETER", "SpringJavaInjectionPointsAutowiringInspection") cacheManager: CacheManager) : MetricsConfigurerAdapter(), ServletContextInitializer {
 
   private val log = LoggerFactory.getLogger(MetricsConfiguration::class.java)
 

@@ -22,7 +22,7 @@ import java.util.concurrent.Executors
 class AsyncConfiguration(private val jHipsterProperties: JHipsterProperties) : AsyncConfigurer, SchedulingConfigurer {
   private val log = LoggerFactory.getLogger(AsyncConfiguration::class.java)
 
-  @Bean(name = arrayOf("taskExecutor"))
+  @Bean(name = ["taskExecutor"])
   override fun getAsyncExecutor(): Executor? {
     log.debug("Creating Async Task Executor")
     val executor = ThreadPoolTaskExecutor()
