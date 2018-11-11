@@ -13,34 +13,34 @@ import java.util.*
  * If the value is not available in `application.yml` then `dev` profile will be used as default.
  */
 object DefaultProfileUtil {
-    private const val SPRING_PROFILE_DEFAULT = "spring.profiles.default"
+  private const val SPRING_PROFILE_DEFAULT = "spring.profiles.default"
 
-    /**
-     * Set a default to use when no profile is configured.
-     *
-     * @param app the Spring application
-     */
-    fun addDefaultProfile(app: SpringApplication) {
-        val defProperties = HashMap<String, Any>()
-        /*
-        * The default profile to use when no other profiles are defined
-        * This cannot be set in the <code>application.yml</code> file.
-        * See https://github.com/spring-projects/spring-boot/issues/1219
-        */
-        defProperties[SPRING_PROFILE_DEFAULT] = JHipsterConstants.SPRING_PROFILE_DEVELOPMENT
-        app.setDefaultProperties(defProperties)
-    }
+  /**
+   * Set a default to use when no profile is configured.
+   *
+   * @param app the Spring application
+   */
+  fun addDefaultProfile(app: SpringApplication) {
+    val defProperties = HashMap<String, Any>()
+    /*
+    * The default profile to use when no other profiles are defined
+    * This cannot be set in the <code>application.yml</code> file.
+    * See https://github.com/spring-projects/spring-boot/issues/1219
+    */
+    defProperties[SPRING_PROFILE_DEFAULT] = JHipsterConstants.SPRING_PROFILE_DEVELOPMENT
+    app.setDefaultProperties(defProperties)
+  }
 
-    /**
-     * Get the profiles that are applied else get default profiles.
-     *
-     * @param env spring environment
-     * @return profiles
-     */
-    fun getActiveProfiles(env: Environment): Array<String> {
-        val profiles = env.activeProfiles
-        return if (profiles.size == 0) {
-            env.defaultProfiles
-        } else profiles
-    }
+  /**
+   * Get the profiles that are applied else get default profiles.
+   *
+   * @param env spring environment
+   * @return profiles
+   */
+  fun getActiveProfiles(env: Environment): Array<String> {
+    val profiles = env.activeProfiles
+    return if (profiles.size == 0) {
+      env.defaultProfiles
+    } else profiles
+  }
 }

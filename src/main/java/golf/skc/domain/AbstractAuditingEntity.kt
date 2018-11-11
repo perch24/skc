@@ -21,23 +21,23 @@ import javax.persistence.MappedSuperclass
 @Audited
 @EntityListeners(AuditingEntityListener::class)
 abstract class AbstractAuditingEntity(
-    @CreatedBy
-    @Column(name = "created_by", nullable = false, length = 50, updatable = false)
-    @JsonIgnore
-    var createdBy: String? = null,
+  @CreatedBy
+  @Column(name = "created_by", nullable = false, length = 50, updatable = false)
+  @JsonIgnore
+  var createdBy: String? = null,
 
-    @CreatedDate
-    @Column(name = "created_date", updatable = false)
-    @JsonIgnore
-    var createdDate: Instant = Instant.now(),
+  @CreatedDate
+  @Column(name = "created_date", updatable = false)
+  @JsonIgnore
+  var createdDate: Instant = Instant.now(),
 
-    @LastModifiedBy
-    @Column(name = "last_modified_by", length = 50)
-    @JsonIgnore
-    var lastModifiedBy: String? = null,
+  @LastModifiedBy
+  @Column(name = "last_modified_by", length = 50)
+  @JsonIgnore
+  var lastModifiedBy: String? = null,
 
-    @LastModifiedDate
-    @Column(name = "last_modified_date")
-    @JsonIgnore
-    var lastModifiedDate: Instant = Instant.now()
+  @LastModifiedDate
+  @Column(name = "last_modified_date")
+  @JsonIgnore
+  var lastModifiedDate: Instant = Instant.now()
 )

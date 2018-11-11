@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class WebConfigurerTestController {
 
-    @GetMapping("/api/test-cors")
-    fun testCorsOnApiPath() {
-    }
+  @GetMapping("/api/test-cors")
+  fun testCorsOnApiPath() {
+  }
 
-    @GetMapping("/test/test-cors")
-    fun testCorsOnOtherPath() {
-    }
+  @GetMapping("/test/test-cors")
+  fun testCorsOnOtherPath() {
+  }
 }

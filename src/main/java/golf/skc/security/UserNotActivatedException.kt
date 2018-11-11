@@ -7,7 +7,7 @@ import org.springframework.security.core.AuthenticationException
  */
 class UserNotActivatedException : AuthenticationException {
 
-    constructor(message: String) : super(message)
+  constructor(message: String) : super(message)
 
-    constructor(message: String, t: Throwable) : super(message, t)
+  constructor(message: String, t: Throwable) : super(message, t)
 }

@@ -12,51 +12,51 @@ import org.zalando.problem.violations.ConstraintViolationProblemModule
 
 @Configuration
 class JacksonConfiguration {
-    /**
-     * Support for Java date and time API.
-     * @return the corresponding Jackson module.
-     */
-    @Bean
-    fun javaTimeModule(): JavaTimeModule {
-        return JavaTimeModule()
-    }
+  /**
+   * Support for Java date and time API.
+   * @return the corresponding Jackson module.
+   */
+  @Bean
+  fun javaTimeModule(): JavaTimeModule {
+    return JavaTimeModule()
+  }
 
-    @Bean
-    fun jdk8TimeModule(): Jdk8Module {
-        return Jdk8Module()
-    }
+  @Bean
+  fun jdk8TimeModule(): Jdk8Module {
+    return Jdk8Module()
+  }
 
 
-    /*
-     * Support for Hibernate types in Jackson.
-     */
-    @Bean
-    fun hibernate5Module(): Hibernate5Module {
-        return Hibernate5Module()
-    }
+  /*
+   * Support for Hibernate types in Jackson.
+   */
+  @Bean
+  fun hibernate5Module(): Hibernate5Module {
+    return Hibernate5Module()
+  }
 
-    /*
-     * Jackson Afterburner module to speed up serialization/deserialization.
-     */
-    @Bean
-    fun afterburnerModule(): AfterburnerModule {
-        return AfterburnerModule()
-    }
+  /*
+   * Jackson Afterburner module to speed up serialization/deserialization.
+   */
+  @Bean
+  fun afterburnerModule(): AfterburnerModule {
+    return AfterburnerModule()
+  }
 
-    /*
-     * Module for serialization/deserialization of RFC7807 Problem.
-     */
-    @Bean
-    internal fun problemModule(): ProblemModule {
-        return ProblemModule()
-    }
+  /*
+   * Module for serialization/deserialization of RFC7807 Problem.
+   */
+  @Bean
+  internal fun problemModule(): ProblemModule {
+    return ProblemModule()
+  }
 
-    /*
-     * Module for serialization/deserialization of ConstraintViolationProblem.
-     */
-    @Bean
-    internal fun constraintViolationProblemModule(): ConstraintViolationProblemModule {
-        return ConstraintViolationProblemModule()
-    }
+  /*
+   * Module for serialization/deserialization of ConstraintViolationProblem.
+   */
+  @Bean
+  internal fun constraintViolationProblemModule(): ConstraintViolationProblemModule {
+    return ConstraintViolationProblemModule()
+  }
 
 }

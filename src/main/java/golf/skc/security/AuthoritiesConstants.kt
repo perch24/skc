@@ -5,9 +5,9 @@ package golf.skc.security
  */
 object AuthoritiesConstants {
 
-    const val ADMIN = "ROLE_ADMIN"
+  const val ADMIN = "ROLE_ADMIN"
 
-    const val USER = "ROLE_USER"
+  const val USER = "ROLE_USER"
 
-    const val ANONYMOUS = "ROLE_ANONYMOUS"
+  const val ANONYMOUS = "ROLE_ANONYMOUS"
 }

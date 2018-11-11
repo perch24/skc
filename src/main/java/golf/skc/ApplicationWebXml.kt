@@ -10,11 +10,11 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 class ApplicationWebXml : SpringBootServletInitializer() {
 
-    override fun configure(application: SpringApplicationBuilder): SpringApplicationBuilder {
-        /**
-         * set a default to use when no profile is configured.
-         */
-        DefaultProfileUtil.addDefaultProfile(application.application())
-        return application.sources(SkcApp::class.java)
-    }
+  override fun configure(application: SpringApplicationBuilder): SpringApplicationBuilder {
+    /**
+     * set a default to use when no profile is configured.
+     */
+    DefaultProfileUtil.addDefaultProfile(application.application())
+    return application.sources(SkcApp::class.java)
+  }
 }
