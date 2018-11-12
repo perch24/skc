@@ -28,25 +28,25 @@ import java.util.*
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [SkcApp::class])
 @Transactional
-open class CustomAuditEventRepositoryIntTest {
+class CustomAuditEventRepositoryIntTest {
 
   @Autowired
-  private val persistenceAuditEventRepository: PersistenceAuditEventRepository? = null
+  lateinit var persistenceAuditEventRepository: PersistenceAuditEventRepository
 
   @Autowired
-  private val auditEventConverter: AuditEventConverter? = null
+  lateinit var auditEventConverter: AuditEventConverter
 
-  private var customAuditEventRepository: CustomAuditEventRepository? = null
+  lateinit var customAuditEventRepository: CustomAuditEventRepository
 
-  private var testUserEvent: PersistentAuditEvent? = null
+  lateinit var testUserEvent: PersistentAuditEvent
 
-  private var testOtherUserEvent: PersistentAuditEvent? = null
+  lateinit var testOtherUserEvent: PersistentAuditEvent
 
-  private var testOldUserEvent: PersistentAuditEvent? = null
+  lateinit var testOldUserEvent: PersistentAuditEvent
 
   @Before
   fun setup() {
-    customAuditEventRepository = CustomAuditEventRepository(persistenceAuditEventRepository!!, auditEventConverter!!)
+    customAuditEventRepository = CustomAuditEventRepository(persistenceAuditEventRepository, auditEventConverter)
     persistenceAuditEventRepository.deleteAll()
     val oneHourAgo = Instant.now().minusSeconds(3600)
 
@@ -74,8 +74,8 @@ open class CustomAuditEventRepositoryIntTest {
     val data = HashMap<String, Any>()
     data["test-key"] = "test-value"
     val event = AuditEvent("test-user", "test-type", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(1)
     val persistentAuditEvent = persistentAuditEvents[0]
     assertThat(persistentAuditEvent.principal).isEqualTo(event.principal)
@@ -94,8 +94,8 @@ open class CustomAuditEventRepositoryIntTest {
     }
     data["test-key"] = largeData
     val event = AuditEvent("test-user", "test-type", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(1)
     val persistentAuditEvent = persistentAuditEvents[0]
     assertThat(persistentAuditEvent.principal).isEqualTo(event.principal)
@@ -117,8 +117,8 @@ open class CustomAuditEventRepositoryIntTest {
     val data = HashMap<String, Any>()
     data["test-key"] = details
     val event = AuditEvent("test-user", "test-type", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(1)
     val persistentAuditEvent = persistentAuditEvents[0]
     assertThat(persistentAuditEvent.data["remoteAddress"]).isEqualTo("1.2.3.4")
@@ -130,8 +130,8 @@ open class CustomAuditEventRepositoryIntTest {
     val data = HashMap<String, Any?>()
     data["test-key"] = null
     val event = AuditEvent("test-user", "test-type", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(1)
     val persistentAuditEvent = persistentAuditEvents[0]
     assertThat(persistentAuditEvent.data["test-key"]).isEqualTo("null")
@@ -142,8 +142,8 @@ open class CustomAuditEventRepositoryIntTest {
     val data = HashMap<String, Any>()
     data["test-key"] = "test-value"
     val event = AuditEvent(Constants.ANONYMOUS_USER, "test-type", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(0)
   }
 
@@ -152,8 +152,8 @@ open class CustomAuditEventRepositoryIntTest {
     val data = HashMap<String, Any>()
     data["test-key"] = "test-value"
     val event = AuditEvent("test-user", "AUTHORIZATION_FAILURE", data)
-    customAuditEventRepository!!.add(event)
-    val persistentAuditEvents = persistenceAuditEventRepository!!.findAll()
+    customAuditEventRepository.add(event)
+    val persistentAuditEvents = persistenceAuditEventRepository.findAll()
     assertThat(persistentAuditEvents).hasSize(0)
   }
 

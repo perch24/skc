@@ -19,26 +19,28 @@ import java.security.Key
 import java.util.*
 
 class TokenProviderTest {
-
-  private val ONE_MINUTE: Long = 60000
-  private var key: Key? = null
-  private var jHipsterProperties: JHipsterProperties? = null
-  private var tokenProvider: TokenProvider? = null
+  companion object {
+    private const val ONE_MINUTE: Long = 60000
+  }
+  
+  lateinit var key: Key
+  lateinit var jHipsterProperties: JHipsterProperties
+  lateinit var tokenProvider: TokenProvider
 
   @Before
   fun setup() {
     jHipsterProperties = Mockito.mock(JHipsterProperties::class.java)
-    tokenProvider = TokenProvider(jHipsterProperties!!)
+    tokenProvider = TokenProvider(jHipsterProperties)
     key = Keys.hmacShaKeyFor(Decoders.BASE64
       .decode("fd54a45s65fds737b9aafcb3412e07ed99b267f33413274720ddbb7f6c5e64e9f14075f2d7ed041592f0b7657baf8"))
 
-    ReflectionTestUtils.setField(tokenProvider!!, "key", key)
-    ReflectionTestUtils.setField(tokenProvider!!, "tokenValidityInMilliseconds", ONE_MINUTE)
+    ReflectionTestUtils.setField(tokenProvider, "key", key)
+    ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", ONE_MINUTE)
   }
 
   @Test
   fun testReturnFalseWhenJWThasInvalidSignature() {
-    val isTokenValid = tokenProvider!!.validateToken(createTokenWithDifferentSignature())
+    val isTokenValid = tokenProvider.validateToken(createTokenWithDifferentSignature())
 
     assertThat(isTokenValid).isEqualTo(false)
   }
@@ -46,21 +48,21 @@ class TokenProviderTest {
   @Test
   fun testReturnFalseWhenJWTisMalformed() {
     val authentication = createAuthentication()
-    val token = tokenProvider!!.createToken(authentication, false)
+    val token = tokenProvider.createToken(authentication, false)
     val invalidToken = token.substring(1)
-    val isTokenValid = tokenProvider!!.validateToken(invalidToken)
+    val isTokenValid = tokenProvider.validateToken(invalidToken)
 
     assertThat(isTokenValid).isEqualTo(false)
   }
 
   @Test
   fun testReturnFalseWhenJWTisExpired() {
-    ReflectionTestUtils.setField(tokenProvider!!, "tokenValidityInMilliseconds", -ONE_MINUTE)
+    ReflectionTestUtils.setField(tokenProvider, "tokenValidityInMilliseconds", -ONE_MINUTE)
 
     val authentication = createAuthentication()
-    val token = tokenProvider!!.createToken(authentication, false)
+    val token = tokenProvider.createToken(authentication, false)
 
-    val isTokenValid = tokenProvider!!.validateToken(token)
+    val isTokenValid = tokenProvider.validateToken(token)
 
     assertThat(isTokenValid).isEqualTo(false)
   }
@@ -69,14 +71,14 @@ class TokenProviderTest {
   fun testReturnFalseWhenJWTisUnsupported() {
     val unsupportedToken = createUnsupportedToken()
 
-    val isTokenValid = tokenProvider!!.validateToken(unsupportedToken)
+    val isTokenValid = tokenProvider.validateToken(unsupportedToken)
 
     assertThat(isTokenValid).isEqualTo(false)
   }
 
   @Test
   fun testReturnFalseWhenJWTisInvalid() {
-    val isTokenValid = tokenProvider!!.validateToken("")
+    val isTokenValid = tokenProvider.validateToken("")
 
     assertThat(isTokenValid).isEqualTo(false)
   }

@@ -27,7 +27,8 @@ import org.springframework.transaction.annotation.Transactional
  * @see UserJWTController
  */
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(SkcApp::class))
+@SpringBootTest(classes = [SkcApp::class])
+@Transactional
 class UserJWTControllerIntTest {
 
   @Autowired
@@ -45,7 +46,7 @@ class UserJWTControllerIntTest {
   @Autowired
   lateinit var exceptionTranslator: ExceptionTranslator
 
-  private var mockMvc: MockMvc? = null
+  lateinit var mockMvc: MockMvc
 
   @Before
   fun setup() {
@@ -56,8 +57,6 @@ class UserJWTControllerIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun testAuthorize() {
     val user = User()
     user.login = "user-jwt-controller"
@@ -70,7 +69,7 @@ class UserJWTControllerIntTest {
     val login = LoginVM()
     login.username = "user-jwt-controller"
     login.password = "test"
-    mockMvc!!.perform(post("/api/authenticate")
+    mockMvc.perform(post("/api/authenticate")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(login)))
       .andExpect(status().isOk)
@@ -81,8 +80,6 @@ class UserJWTControllerIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun testAuthorizeWithRememberMe() {
     val user = User()
     user.login = "user-jwt-controller-remember-me"
@@ -96,7 +93,7 @@ class UserJWTControllerIntTest {
     login.username = "user-jwt-controller-remember-me"
     login.password = "test"
     login.isRememberMe = true
-    mockMvc!!.perform(post("/api/authenticate")
+    mockMvc.perform(post("/api/authenticate")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(login)))
       .andExpect(status().isOk)
@@ -107,13 +104,11 @@ class UserJWTControllerIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun testAuthorizeFails() {
     val login = LoginVM()
     login.username = "wrong-user"
     login.password = "wrong password"
-    mockMvc!!.perform(post("/api/authenticate")
+    mockMvc.perform(post("/api/authenticate")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(login)))
       .andExpect(status().isUnauthorized)

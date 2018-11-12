@@ -30,7 +30,7 @@ import java.util.*
  * @see UserService
  */
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(SkcApp::class))
+@SpringBootTest(classes = [SkcApp::class])
 @Transactional
 class UserServiceIntTest {
 
@@ -46,107 +46,101 @@ class UserServiceIntTest {
   @Mock
   lateinit var dateTimeProvider: DateTimeProvider
 
-  private var user: User? = null
+  lateinit var user: User
 
   @Before
   fun init() {
     user = User()
-    user!!.login = "johndoe"
-    user!!.password = RandomStringUtils.random(60)
-    user!!.activated = true
-    user!!.email = "johndoe@localhost"
-    user!!.firstName = "john"
-    user!!.lastName = "doe"
-    user!!.imageUrl = "http://placehold.it/50x50"
-    user!!.langKey = "en"
+    user.login = "johndoe"
+    user.password = RandomStringUtils.random(60)
+    user.activated = true
+    user.email = "johndoe@localhost"
+    user.firstName = "john"
+    user.lastName = "doe"
+    user.imageUrl = "http://placehold.it/50x50"
+    user.langKey = "en"
 
     `when`(dateTimeProvider.now).thenReturn(Optional.of(LocalDateTime.now()))
     auditingHandler.setDateTimeProvider(dateTimeProvider)
   }
 
   @Test
-  @Transactional
   fun assertThatUserMustExistToResetPassword() {
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     var maybeUser = userService.requestPasswordReset("invalid.login@localhost")
     assertThat(maybeUser).isNotPresent
 
-    maybeUser = userService.requestPasswordReset(user!!.email!!)
+    maybeUser = userService.requestPasswordReset(user.email!!)
     assertThat(maybeUser).isPresent
-    assertThat(maybeUser.orElse(null).email).isEqualTo(user!!.email)
+    assertThat(maybeUser.orElse(null).email).isEqualTo(user.email)
     assertThat(maybeUser.orElse(null).resetDate).isNotNull()
     assertThat(maybeUser.orElse(null).resetKey).isNotNull()
   }
 
   @Test
-  @Transactional
   fun assertThatOnlyActivatedUserCanRequestPasswordReset() {
-    user!!.activated = false
-    userRepository.saveAndFlush(user!!)
+    user.activated = false
+    userRepository.saveAndFlush(user)
 
-    val maybeUser = userService.requestPasswordReset(user!!.login!!)
+    val maybeUser = userService.requestPasswordReset(user.login!!)
     assertThat(maybeUser).isNotPresent
-    userRepository.delete(user!!)
+    userRepository.delete(user)
   }
 
   @Test
-  @Transactional
   fun assertThatResetKeyMustNotBeOlderThan24Hours() {
     val daysAgo = Instant.now().minus(25, ChronoUnit.HOURS)
     val resetKey = RandomUtil.generateResetKey()
-    user!!.activated = true
-    user!!.resetDate = daysAgo
-    user!!.resetKey = resetKey
-    userRepository.saveAndFlush(user!!)
+    user.activated = true
+    user.resetDate = daysAgo
+    user.resetKey = resetKey
+    userRepository.saveAndFlush(user)
 
-    val maybeUser = userService.completePasswordReset("johndoe2", user!!.resetKey!!)
+    val maybeUser = userService.completePasswordReset("johndoe2", user.resetKey!!)
     assertThat(maybeUser).isNotPresent
-    userRepository.delete(user!!)
+    userRepository.delete(user)
   }
 
   @Test
-  @Transactional
   fun assertThatResetKeyMustBeValid() {
     val daysAgo = Instant.now().minus(25, ChronoUnit.HOURS)
-    user!!.activated = true
-    user!!.resetDate = daysAgo
-    user!!.resetKey = "1234"
-    userRepository.saveAndFlush(user!!)
+    user.activated = true
+    user.resetDate = daysAgo
+    user.resetKey = "1234"
+    userRepository.saveAndFlush(user)
 
-    val maybeUser = userService.completePasswordReset("johndoe2", user!!.resetKey!!)
+    val maybeUser = userService.completePasswordReset("johndoe2", user.resetKey!!)
     assertThat(maybeUser).isNotPresent
-    userRepository.delete(user!!)
+    userRepository.delete(user)
   }
 
   @Test
-  @Transactional
   fun assertThatUserCanResetPassword() {
-    val oldPassword = user!!.password
+    val oldPassword = user.password
     val daysAgo = Instant.now().minus(2, ChronoUnit.HOURS)
     val resetKey = RandomUtil.generateResetKey()
-    user!!.activated = true
-    user!!.resetDate = daysAgo
-    user!!.resetKey = resetKey
-    userRepository.saveAndFlush(user!!)
+    user.activated = true
+    user.resetDate = daysAgo
+    user.resetKey = resetKey
+    userRepository.saveAndFlush(user)
 
-    val maybeUser = userService.completePasswordReset("johndoe2", user!!.resetKey!!)
+    val maybeUser = userService.completePasswordReset("johndoe2", user.resetKey!!)
     assertThat(maybeUser).isPresent
     assertThat(maybeUser.orElse(null).resetDate).isNull()
     assertThat(maybeUser.orElse(null).resetKey).isNull()
     assertThat(maybeUser.orElse(null).password).isNotEqualTo(oldPassword)
 
-    userRepository.delete(user!!)
+    userRepository.delete(user)
   }
 
   @Test
-  @Transactional
   fun testFindNotActivatedUsersByCreationDateBefore() {
     val now = Instant.now()
     `when`(dateTimeProvider.now).thenReturn(Optional.of(now.minus(4, ChronoUnit.DAYS)))
-    user!!.activated = false
-    val dbUser = userRepository.saveAndFlush(user!!)
+    user.activated = false
+    val dbUser = userRepository.saveAndFlush(user)
     dbUser.createdDate = now.minus(4, ChronoUnit.DAYS)
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     var users = userRepository.findAllByActivatedIsFalseAndCreatedDateBefore(now.minus(3, ChronoUnit.DAYS))
     assertThat(users).isNotEmpty
     userService.removeNotActivatedUsers()
@@ -155,11 +149,10 @@ class UserServiceIntTest {
   }
 
   @Test
-  @Transactional
   fun assertThatAnonymousUserIsNotGet() {
-    user!!.login = Constants.ANONYMOUS_USER
+    user.login = Constants.ANONYMOUS_USER
     if (!userRepository.findOneByLogin(Constants.ANONYMOUS_USER).isPresent) {
-      userRepository.saveAndFlush(user!!)
+      userRepository.saveAndFlush(user)
     }
     val pageable = PageRequest.of(0, userRepository.count().toInt())
     val allManagedUsers = userService.getAllManagedUsers(pageable)
@@ -168,19 +161,16 @@ class UserServiceIntTest {
       .isTrue()
   }
 
-
   @Test
-  @Transactional
   fun testRemoveNotActivatedUsers() {
     // custom "now" for audit to use as creation date
     `when`(dateTimeProvider.now).thenReturn(Optional.of(Instant.now().minus(30, ChronoUnit.DAYS)))
 
-    user!!.activated = false
-    userRepository.saveAndFlush(user!!)
+    user.activated = false
+    userRepository.saveAndFlush(user)
 
     assertThat(userRepository.findOneByLogin("johndoe")).isPresent
     userService.removeNotActivatedUsers()
     assertThat(userRepository.findOneByLogin("johndoe")).isNotPresent
   }
-
 }

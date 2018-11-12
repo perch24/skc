@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
  * @see ExceptionTranslator
  */
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(SkcApp::class))
+@SpringBootTest(classes = [SkcApp::class])
 class ExceptionTranslatorIntTest {
 
   @Autowired
@@ -33,7 +33,7 @@ class ExceptionTranslatorIntTest {
   @Autowired
   lateinit var jacksonMessageConverter: MappingJackson2HttpMessageConverter
 
-  private var mockMvc: MockMvc? = null
+  lateinit var mockMvc: MockMvc
 
   @Before
   fun setup() {
@@ -44,18 +44,16 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testConcurrencyFailure() {
-    mockMvc!!.perform(get("/test/concurrency-failure"))
+    mockMvc.perform(get("/test/concurrency-failure"))
       .andExpect(status().isConflict)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value(ErrorConstants.ERR_CONCURRENCY_FAILURE))
   }
 
   @Test
-  @Throws(Exception::class)
   fun testMethodArgumentNotValid() {
-    mockMvc!!.perform(post("/test/method-argument").content("{}").contentType(MediaType.APPLICATION_JSON))
+    mockMvc.perform(post("/test/method-argument").content("{}").contentType(MediaType.APPLICATION_JSON))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value(ErrorConstants.ERR_VALIDATION))
@@ -65,9 +63,8 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testParameterizedError() {
-    mockMvc!!.perform(get("/test/parameterized-error"))
+    mockMvc.perform(get("/test/parameterized-error"))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("test parameterized error"))
@@ -76,9 +73,8 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testParameterizedError2() {
-    mockMvc!!.perform(get("/test/parameterized-error2"))
+    mockMvc.perform(get("/test/parameterized-error2"))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("test parameterized error"))
@@ -87,27 +83,24 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testMissingServletRequestPartException() {
-    mockMvc!!.perform(get("/test/missing-servlet-request-part"))
+    mockMvc.perform(get("/test/missing-servlet-request-part"))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.400"))
   }
 
   @Test
-  @Throws(Exception::class)
   fun testMissingServletRequestParameterException() {
-    mockMvc!!.perform(get("/test/missing-servlet-request-parameter"))
+    mockMvc.perform(get("/test/missing-servlet-request-parameter"))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.400"))
   }
 
   @Test
-  @Throws(Exception::class)
   fun testAccessDenied() {
-    mockMvc!!.perform(get("/test/access-denied"))
+    mockMvc.perform(get("/test/access-denied"))
       .andExpect(status().isForbidden)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.403"))
@@ -115,9 +108,8 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testUnauthorized() {
-    mockMvc!!.perform(get("/test/unauthorized"))
+    mockMvc.perform(get("/test/unauthorized"))
       .andExpect(status().isUnauthorized)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.401"))
@@ -126,9 +118,8 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testMethodNotSupported() {
-    mockMvc!!.perform(post("/test/access-denied"))
+    mockMvc.perform(post("/test/access-denied"))
       .andExpect(status().isMethodNotAllowed)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.405"))
@@ -136,9 +127,8 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testExceptionWithResponseStatus() {
-    mockMvc!!.perform(get("/test/response-status"))
+    mockMvc.perform(get("/test/response-status"))
       .andExpect(status().isBadRequest)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.400"))
@@ -146,13 +136,11 @@ class ExceptionTranslatorIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testInternalServerError() {
-    mockMvc!!.perform(get("/test/internal-server-error"))
+    mockMvc.perform(get("/test/internal-server-error"))
       .andExpect(status().isInternalServerError)
       .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
       .andExpect(jsonPath("$.message").value("error.http.500"))
       .andExpect(jsonPath("$.title").value("Internal Server Error"))
   }
-
 }

@@ -39,7 +39,6 @@ class LogsResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getAllLogs() {
     restLogsMockMvc.perform(get("/management/logs"))
       .andExpect(status().isOk)
@@ -47,7 +46,6 @@ class LogsResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun changeLogs() {
     val logger = LoggerVM()
     logger.level = "INFO"

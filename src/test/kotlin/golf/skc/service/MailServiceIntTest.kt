@@ -28,38 +28,37 @@ import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = arrayOf(SkcApp::class))
+@SpringBootTest(classes = [SkcApp::class])
 class MailServiceIntTest {
 
   @Autowired
-  private val jHipsterProperties: JHipsterProperties? = null
+  lateinit var jHipsterProperties: JHipsterProperties
 
   @Autowired
-  private val messageSource: MessageSource? = null
+  lateinit var messageSource: MessageSource
 
   @Autowired
-  private val templateEngine: SpringTemplateEngine? = null
+  lateinit var templateEngine: SpringTemplateEngine
 
   @Spy
-  private val javaMailSender: JavaMailSenderImpl? = null
+  lateinit var javaMailSender: JavaMailSenderImpl
 
   @Captor
-  private val messageCaptor: ArgumentCaptor<MimeMessage>? = null
+  lateinit var messageCaptor: ArgumentCaptor<MimeMessage>
 
-  private var mailService: MailService? = null
+  lateinit var mailService: MailService
 
   @Before
   fun setup() {
     MockitoAnnotations.initMocks(this)
     doNothing().`when`<JavaMailSenderImpl>(javaMailSender).send(any(MimeMessage::class.java))
-    mailService = MailService(jHipsterProperties!!, javaMailSender!!, messageSource!!, templateEngine!!)
+    mailService = MailService(jHipsterProperties, javaMailSender, messageSource, templateEngine)
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendEmail() {
-    mailService!!.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.subject).isEqualTo("testSubject")
     assertThat(message.allRecipients[0].toString()).isEqualTo("john.doe@example.com")
@@ -70,10 +69,9 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendHtmlEmail() {
-    mailService!!.sendEmail("john.doe@example.com", "testSubject", "testContent", false, true)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", false, true)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.subject).isEqualTo("testSubject")
     assertThat(message.allRecipients[0].toString()).isEqualTo("john.doe@example.com")
@@ -84,10 +82,9 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendMultipartEmail() {
-    mailService!!.sendEmail("john.doe@example.com", "testSubject", "testContent", true, false)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", true, false)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     val mp = message.content as MimeMultipart
     val part = (mp.getBodyPart(0).content as MimeMultipart).getBodyPart(0) as MimeBodyPart
@@ -102,10 +99,9 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendMultipartHtmlEmail() {
-    mailService!!.sendEmail("john.doe@example.com", "testSubject", "testContent", true, true)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", true, true)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     val mp = message.content as MimeMultipart
     val part = (mp.getBodyPart(0).content as MimeMultipart).getBodyPart(0) as MimeBodyPart
@@ -120,14 +116,13 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendEmailFromTemplate() {
     val user = User()
     user.login = "john"
     user.email = "john.doe@example.com"
     user.langKey = "en"
-    mailService!!.sendEmailFromTemplate(user, "mail/testEmail", "email.test.title")
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendEmailFromTemplate(user, "mail/testEmail", "email.test.title")
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.subject).isEqualTo("test title")
     assertThat(message.allRecipients[0].toString()).isEqualTo(user.email)
@@ -137,14 +132,13 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendActivationEmail() {
     val user = User()
     user.langKey = Constants.DEFAULT_LANGUAGE
     user.login = "john"
     user.email = "john.doe@example.com"
-    mailService!!.sendActivationEmail(user)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendActivationEmail(user)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.allRecipients[0].toString()).isEqualTo(user.email)
     assertThat(message.from[0].toString()).isEqualTo("test@localhost")
@@ -153,14 +147,13 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testCreationEmail() {
     val user = User()
     user.langKey = Constants.DEFAULT_LANGUAGE
     user.login = "john"
     user.email = "john.doe@example.com"
-    mailService!!.sendCreationEmail(user)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendCreationEmail(user)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.allRecipients[0].toString()).isEqualTo(user.email)
     assertThat(message.from[0].toString()).isEqualTo("test@localhost")
@@ -169,14 +162,13 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendPasswordResetMail() {
     val user = User()
     user.langKey = Constants.DEFAULT_LANGUAGE
     user.login = "john"
     user.email = "john.doe@example.com"
-    mailService!!.sendPasswordResetMail(user)
-    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor!!.capture())
+    mailService.sendPasswordResetMail(user)
+    verify<JavaMailSenderImpl>(javaMailSender).send(messageCaptor.capture())
     val message = messageCaptor.value
     assertThat(message.allRecipients[0].toString()).isEqualTo(user.email)
     assertThat(message.from[0].toString()).isEqualTo("test@localhost")
@@ -185,10 +177,8 @@ class MailServiceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun testSendEmailWithException() {
     doThrow(MailSendException::class.java).`when`<JavaMailSenderImpl>(javaMailSender).send(any(MimeMessage::class.java))
-    mailService!!.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false)
+    mailService.sendEmail("john.doe@example.com", "testSubject", "testContent", false, false)
   }
-
 }

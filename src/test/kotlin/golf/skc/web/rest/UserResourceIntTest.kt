@@ -41,6 +41,7 @@ import javax.persistence.EntityManager
  */
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [SkcApp::class])
+@Transactional
 class UserResourceIntTest {
 
   @Autowired
@@ -65,14 +66,11 @@ class UserResourceIntTest {
   lateinit var exceptionTranslator: ExceptionTranslator
 
   @Autowired
-  lateinit var em: EntityManager
-
-  @Autowired
   lateinit var cacheManager: CacheManager
 
-  private var restUserMockMvc: MockMvc? = null
+  lateinit var restUserMockMvc: MockMvc
 
-  private var user: User? = null
+  lateinit var user: User
 
   @Before
   fun setup() {
@@ -90,13 +88,11 @@ class UserResourceIntTest {
   @Before
   fun initTest() {
     user = createEntity()
-    user?.login = DEFAULT_LOGIN
-    user?.email = DEFAULT_EMAIL
+    user.login = DEFAULT_LOGIN
+    user.email = DEFAULT_EMAIL
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun createUser() {
     val databaseSizeBeforeCreate = userRepository.findAll().size
 
@@ -112,7 +108,7 @@ class UserResourceIntTest {
     managedUserVM.langKey = DEFAULT_LANGKEY
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
-    restUserMockMvc!!.perform(post("/api/users")
+    restUserMockMvc.perform(post("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isCreated)
@@ -130,8 +126,6 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun createUserWithExistingId() {
     val databaseSizeBeforeCreate = userRepository.findAll().size
 
@@ -148,7 +142,7 @@ class UserResourceIntTest {
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
     // An entity with an existing ID cannot be created, so this API call must fail
-    restUserMockMvc!!.perform(post("/api/users")
+    restUserMockMvc.perform(post("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isBadRequest)
@@ -159,11 +153,9 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun createUserWithExistingLogin() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     val databaseSizeBeforeCreate = userRepository.findAll().size
 
     val managedUserVM = ManagedUserVM()
@@ -178,7 +170,7 @@ class UserResourceIntTest {
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
     // Create the User
-    restUserMockMvc!!.perform(post("/api/users")
+    restUserMockMvc.perform(post("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isBadRequest)
@@ -189,11 +181,9 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun createUserWithExistingEmail() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     val databaseSizeBeforeCreate = userRepository.findAll().size
 
     val managedUserVM = ManagedUserVM()
@@ -208,7 +198,7 @@ class UserResourceIntTest {
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
     // Create the User
-    restUserMockMvc!!.perform(post("/api/users")
+    restUserMockMvc.perform(post("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isBadRequest)
@@ -219,14 +209,12 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun getAllUsers() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
 
     // Get all the users
-    restUserMockMvc!!.perform(get("/api/users?sort=id,desc")
+    restUserMockMvc.perform(get("/api/users?sort=id,desc")
       .accept(MediaType.APPLICATION_JSON))
       .andExpect(status().isOk)
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
@@ -239,46 +227,40 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun getUser() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
 
-    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user!!.login!!)).isNull()
+    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)!!.get(user.login!!)).isNull()
 
     // Get the user
-    restUserMockMvc!!.perform(get("/api/users/{login}", user!!.login!!))
+    restUserMockMvc.perform(get("/api/users/{login}", user.login!!))
       .andExpect(status().isOk)
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-      .andExpect(jsonPath("$.login").value(user!!.login!!))
+      .andExpect(jsonPath("$.login").value(user.login!!))
       .andExpect(jsonPath("$.firstName").value(DEFAULT_FIRSTNAME))
       .andExpect(jsonPath("$.lastName").value(DEFAULT_LASTNAME))
       .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
       .andExpect(jsonPath("$.imageUrl").value(DEFAULT_IMAGEURL))
       .andExpect(jsonPath("$.langKey").value(DEFAULT_LANGKEY))
 
-    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user!!.login!!)).isNotNull
+    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user.login!!)).isNotNull
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun getNonExistingUser() {
-    restUserMockMvc!!.perform(get("/api/users/unknown"))
+    restUserMockMvc.perform(get("/api/users/unknown"))
       .andExpect(status().isNotFound)
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun updateUser() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     val databaseSizeBeforeUpdate = userRepository.findAll().size
 
     // Update the user
-    val updatedUser = userRepository.findById(user!!.id!!).get()
+    val updatedUser = userRepository.findById(user.id!!).get()
 
     val managedUserVM = ManagedUserVM()
     managedUserVM.id = updatedUser.id
@@ -296,7 +278,7 @@ class UserResourceIntTest {
     managedUserVM.lastModifiedDate = updatedUser.lastModifiedDate
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
-    restUserMockMvc!!.perform(put("/api/users")
+    restUserMockMvc.perform(put("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isOk)
@@ -313,15 +295,13 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun updateUserLogin() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     val databaseSizeBeforeUpdate = userRepository.findAll().size
 
     // Update the user
-    val updatedUser = userRepository.findById(user!!.id!!).get()
+    val updatedUser = userRepository.findById(user.id!!).get()
 
     val managedUserVM = ManagedUserVM()
     managedUserVM.id = updatedUser.id
@@ -339,7 +319,7 @@ class UserResourceIntTest {
     managedUserVM.lastModifiedDate = updatedUser.lastModifiedDate
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
-    restUserMockMvc!!.perform(put("/api/users")
+    restUserMockMvc.perform(put("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isOk)
@@ -357,11 +337,9 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun updateUserExistingEmail() {
     // Initialize the database with 2 users
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
 
     val anotherUser = User()
     anotherUser.login = "jhipster"
@@ -375,7 +353,7 @@ class UserResourceIntTest {
     userRepository.saveAndFlush(anotherUser)
 
     // Update the user
-    val updatedUser = userRepository.findById(user!!.id!!).get()
+    val updatedUser = userRepository.findById(user.id!!).get()
 
     val managedUserVM = ManagedUserVM()
     managedUserVM.id = updatedUser.id
@@ -393,18 +371,16 @@ class UserResourceIntTest {
     managedUserVM.lastModifiedDate = updatedUser.lastModifiedDate
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
-    restUserMockMvc!!.perform(put("/api/users")
+    restUserMockMvc.perform(put("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isBadRequest)
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun updateUserExistingLogin() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
 
     val anotherUser = User()
     anotherUser.login = "jhipster"
@@ -418,7 +394,7 @@ class UserResourceIntTest {
     userRepository.saveAndFlush(anotherUser)
 
     // Update the user
-    val updatedUser = userRepository.findById(user!!.id!!).get()
+    val updatedUser = userRepository.findById(user.id!!).get()
 
     val managedUserVM = ManagedUserVM()
     managedUserVM.id = updatedUser.id
@@ -436,26 +412,24 @@ class UserResourceIntTest {
     managedUserVM.lastModifiedDate = updatedUser.lastModifiedDate
     managedUserVM.authorities = setOf(AuthoritiesConstants.USER)
 
-    restUserMockMvc!!.perform(put("/api/users")
+    restUserMockMvc.perform(put("/api/users")
       .contentType(TestUtil.APPLICATION_JSON_UTF8)
       .content(TestUtil.convertObjectToJsonBytes(managedUserVM)))
       .andExpect(status().isBadRequest)
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun deleteUser() {
     // Initialize the database
-    userRepository.saveAndFlush(user!!)
+    userRepository.saveAndFlush(user)
     val databaseSizeBeforeDelete = userRepository.findAll().size
 
     // Delete the user
-    restUserMockMvc!!.perform(delete("/api/users/{login}", user!!.login!!)
+    restUserMockMvc.perform(delete("/api/users/{login}", user.login!!)
       .accept(TestUtil.APPLICATION_JSON_UTF8))
       .andExpect(status().isOk)
 
-    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user!!.login!!)).isNull()
+    assertThat(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)?.get(user.login!!)).isNull()
 
     // Validate the database is empty
     val userList = userRepository.findAll()
@@ -463,10 +437,8 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun getAllAuthorities() {
-    restUserMockMvc!!.perform(get("/api/users/authorities")
+    restUserMockMvc.perform(get("/api/users/authorities")
       .accept(TestUtil.APPLICATION_JSON_UTF8)
       .contentType(TestUtil.APPLICATION_JSON_UTF8))
       .andExpect(status().isOk)
@@ -476,8 +448,6 @@ class UserResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun testUserEquals() {
     TestUtil.equalsVerifier(User::class.java)
     val user1 = User()
@@ -530,17 +500,17 @@ class UserResourceIntTest {
 
   @Test
   fun testUserToUserDTO() {
-    user!!.id = DEFAULT_ID
-    user!!.createdBy = DEFAULT_LOGIN
-    user!!.createdDate = Instant.now()
-    user!!.lastModifiedBy = DEFAULT_LOGIN
-    user!!.lastModifiedDate = Instant.now()
+    user.id = DEFAULT_ID
+    user.createdBy = DEFAULT_LOGIN
+    user.createdDate = Instant.now()
+    user.lastModifiedBy = DEFAULT_LOGIN
+    user.lastModifiedDate = Instant.now()
     val authorities = HashSet<Authority>()
     val authority = Authority(AuthoritiesConstants.USER)
     authorities.add(authority)
-    user!!.authorities = authorities
+    user.authorities = authorities
 
-    val userDTO = userMapper.userToUserDTO(user!!)
+    val userDTO = userMapper.userToUserDTO(user)
 
     assertThat(userDTO.id).isEqualTo(DEFAULT_ID)
     assertThat(userDTO.login).isEqualTo(DEFAULT_LOGIN)
@@ -551,9 +521,9 @@ class UserResourceIntTest {
     assertThat(userDTO.imageUrl).isEqualTo(DEFAULT_IMAGEURL)
     assertThat(userDTO.langKey).isEqualTo(DEFAULT_LANGKEY)
     assertThat(userDTO.createdBy).isEqualTo(DEFAULT_LOGIN)
-    assertThat(userDTO.createdDate).isEqualTo(user!!.createdDate)
+    assertThat(userDTO.createdDate).isEqualTo(user.createdDate)
     assertThat(userDTO.lastModifiedBy).isEqualTo(DEFAULT_LOGIN)
-    assertThat(userDTO.lastModifiedDate).isEqualTo(user!!.lastModifiedDate)
+    assertThat(userDTO.lastModifiedDate).isEqualTo(user.lastModifiedDate)
     assertThat(userDTO.authorities).containsExactly(AuthoritiesConstants.USER)
     assertThat(userDTO.toString()).isNotNull()
   }

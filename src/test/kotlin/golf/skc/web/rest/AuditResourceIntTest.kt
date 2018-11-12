@@ -76,7 +76,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getAllAudits() {
     // Initialize the database
     auditEventRepository.save(auditEvent)
@@ -89,7 +88,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getAudit() {
     // Initialize the database
     auditEventRepository.save(auditEvent)
@@ -102,7 +100,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getAuditsByDate() {
     // Initialize the database
     auditEventRepository.save(auditEvent)
@@ -119,7 +116,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getNonExistingAuditsByDate() {
     // Initialize the database
     auditEventRepository.save(auditEvent)
@@ -136,7 +132,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Throws(Exception::class)
   fun getNonExistingAudit() {
     // Get the audit
     restAuditMockMvc.perform(get("/management/audits/{id}", java.lang.Long.MAX_VALUE))
@@ -144,8 +139,6 @@ class AuditResourceIntTest {
   }
 
   @Test
-  @Transactional
-  @Throws(Exception::class)
   fun testPersistentAuditEventEquals() {
     TestUtil.equalsVerifier(PersistentAuditEvent::class.java)
     val auditEvent1 = PersistentAuditEvent(
@@ -166,7 +159,6 @@ class AuditResourceIntTest {
   }
 
   companion object {
-
     private const val SAMPLE_PRINCIPAL = "SAMPLE_PRINCIPAL"
     private const val SAMPLE_TYPE = "SAMPLE_TYPE"
     private val SAMPLE_TIMESTAMP = Instant.parse("2015-08-04T10:11:30Z")
