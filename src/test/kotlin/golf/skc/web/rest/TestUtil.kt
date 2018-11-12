@@ -115,16 +115,16 @@ object TestUtil {
       assertThat(domainObject1.hashCode()).isNotEqualTo(domainObject2.hashCode())
     }
   }
+}
 
-  /**
-   * Create a FormattingConversionService which use ISO date format, instead of the localized one.
-   * @return the FormattingConversionService
-   */
-  fun createFormattingConversionService(): FormattingConversionService {
-    val dfcs = DefaultFormattingConversionService()
-    val registrar = DateTimeFormatterRegistrar()
-    registrar.setUseIsoFormat(true)
-    registrar.registerFormatters(dfcs)
-    return dfcs
-  }
+/**
+ * Create a FormattingConversionService which use ISO date format, instead of the localized one.
+ * @return the FormattingConversionService
+ */
+fun createFormattingConversionService(): FormattingConversionService {
+  val dfcs = DefaultFormattingConversionService()
+  val registrar = DateTimeFormatterRegistrar()
+  registrar.setUseIsoFormat(true)
+  registrar.registerFormatters(dfcs)
+  return dfcs
 }
